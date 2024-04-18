@@ -1,9 +1,9 @@
-package ex2test
+package ex2
 
 import org.junit.Test
 import org.junit.Assert.*
 
-class ScalaTest:
+class ConferenceReviewingTest:
   import ex2.{ConferenceReviewing, ConferenceReviewingImpl, Question}
 
   val cr: ConferenceReviewing = ConferenceReviewingImpl()
@@ -68,16 +68,3 @@ class ScalaTest:
     assertEquals((3.6+5.6+5.6)/3, cr.averageWeightedFinalScoreMap()(4), 0.01);
     assertEquals((6.0+7.0)/2, cr.averageWeightedFinalScoreMap()(5), 0.01);
     assertEquals(5, cr.averageWeightedFinalScoreMap().size);
-
-//
-//	@org.junit.Test
-//	public void optionalTestAverageWeightedFinalScore() {
-//		// l'articolo 1 ha media pesata finale pari a (4.8+5.4)/2 = 5,1, con scarto massimo 0.01
-//		assertEquals(cr.averageWeightedFinalScoreMap().get(1),(4.8+5.4)/2,0.01);
-//		// e simile per gli altri
-//		assertEquals(cr.averageWeightedFinalScoreMap().get(2),(9.0+6.0)/2,0.01);
-//		assertEquals(cr.averageWeightedFinalScoreMap().get(3),(0.9+1.6)/2,0.01);
-//		assertEquals(cr.averageWeightedFinalScoreMap().get(4),(3.6+5.6+5.6)/3,0.01);
-//		assertEquals(cr.averageWeightedFinalScoreMap().get(5),(6.0+7.0)/2,0.01);
-//		assertEquals(cr.averageWeightedFinalScoreMap().size(),5);
-//	}
