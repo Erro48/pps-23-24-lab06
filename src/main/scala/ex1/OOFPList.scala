@@ -44,14 +44,24 @@ enum List[A]:
     case Nil() => throw new IllegalStateException()
     case h :: t => t.foldLeft(h)(op)
 
+
+  override def toString: String = foldLeft("List:")((init, h) => init + h + "|")
+
   // Exercise: implement the following methods
-  def zipWithValue[B](value: B): List[(A, B)] = ???
-  def length(): Int = ???
-  def zipWithIndex: List[(A, Int)] = ???
-  def partition(predicate: A => Boolean): (List[A], List[A]) = ???
-  def span(predicate: A => Boolean): (List[A], List[A]) = ???
-  def takeRight(n: Int): List[A] = ???
-  def collect(predicate: PartialFunction[A, A]): List[A] = ???
+  def zipWithValue[B](value: B): List[(A, B)] = foldRight(Nil())((h, next) => (h, value) :: next)
+  def length(): Int = foldLeft(0)((init, h) => init + 1)
+  def zipWithIndex: List[(A, Int)] = foldRight(Nil())((h, next) => (h, index(next)) :: next)
+  def partition(predicate: A => Boolean): (List[A], List[A]) = //foldRight((Nil(), Nil()))((a, b) => (filter(predicate), filter(!predicate(_))))
+    foldLeft((Nil(), Nil()))((init, h) => init match { case (ok, notOk) => if predicate.apply(h) then (ok.enqueue(h), notOk) else (ok, notOk.enqueue(h))})
+  def span(predicate: A => Boolean): (List[A], List[A]) =
+    foldLeft((Nil(), Nil()))((init, h) => init match { case (ok, notOk) => if predicate.apply(h) && notOk.length() == 0 then (ok.enqueue(h), notOk) else (ok, notOk.enqueue(h))})
+  def takeRight(n: Int): List[A] = foldRight(Nil())((h, t) => if t.length() - n < 0 then h :: t.takeRight(n - 1) else t.takeRight(n))
+  def collect(predicate: PartialFunction[A, A]): List[A] =
+    foldLeft(Nil())((next, h) => if predicate.applyOrElse(h, x => null).==(null) then next else next.enqueue(predicate.apply(h)))
+
+  private def index[T](t: List[T]): Int = this.length() - t.length() - 1
+
+  private def enqueue(element: A): List[A] = this.append(element :: Nil())
 // Factories
 object List:
 
@@ -66,8 +76,9 @@ object List:
 object Test extends App:
 
   import List.*
-  val reference = List(1, 2, 3, 4)
+  val reference = List(0, 1, 2, 3, 4)
   println(reference.zipWithValue(10)) // List((1, 10), (2, 10), (3, 10), (4, 10))
+  println(reference.length())
   println(reference.zipWithIndex) // List((1, 0), (2, 1), (3, 2), (4, 3))
   println(reference.partition(_ % 2 == 0)) // (List(2, 4), List(1, 3))
   println(reference.span(_ % 2 != 0)) // (List(1), List(2, 3, 4))
