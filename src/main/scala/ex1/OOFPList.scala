@@ -49,13 +49,19 @@ enum List[A]:
 
   // Exercise: implement the following methods
   def zipWithValue[B](value: B): List[(A, B)] = foldRight(Nil())((h, next) => (h, value) :: next)
+
   def length(): Int = foldLeft(0)((init, h) => init + 1)
+
   def zipWithIndex: List[(A, Int)] = foldRight(Nil())((h, next) => (h, index(next)) :: next)
+
   def partition(predicate: A => Boolean): (List[A], List[A]) = //foldRight((Nil(), Nil()))((a, b) => (filter(predicate), filter(!predicate(_))))
     foldLeft((Nil(), Nil()))((init, h) => init match { case (ok, notOk) => if predicate.apply(h) then (ok.enqueue(h), notOk) else (ok, notOk.enqueue(h))})
+
   def span(predicate: A => Boolean): (List[A], List[A]) =
     foldLeft((Nil(), Nil()))((init, h) => init match { case (ok, notOk) => if predicate.apply(h) && notOk.length() == 0 then (ok.enqueue(h), notOk) else (ok, notOk.enqueue(h))})
+
   def takeRight(n: Int): List[A] = foldRight(Nil())((h, t) => if t.length() - n < 0 then h :: t.takeRight(n - 1) else t.takeRight(n))
+
   def collect(predicate: PartialFunction[A, A]): List[A] =
     foldLeft(Nil())((next, h) => if predicate.applyOrElse(h, x => null).==(null) then next else next.enqueue(predicate.apply(h)))
 
